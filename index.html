@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音频资源访问系统</title>
+    <style>
+        /* 保留原有样式不变 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #6e8efb;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+        
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            border-radius: 15px;
+            background: #f8f9fa;
+        }
+        
+        h2 {
+            color: #a777e3;
+            margin-bottom: 15px;
+        }
+        
+        .qr-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        #qrcode {
+            width: 300px;
+            height: 300px;
+            border: 5px solid #6e8efb;
+            border-radius: 15px;
+            margin: 20px auto;
+            padding: 10px;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #qrcode canvas {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .instructions {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #6e8efb;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .url-display {
+            margin: 15px 0;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 8px;
+            word-break: break-all;
+            font-size: 14px;
+        }
+        
+        .btn {
+            background: #6e8efb;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:hover {
+            background: #5a7de4;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .status-message {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            #qrcode {
+                width: 250px;
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>音频资源访问系统</h1>
+        
+        <div class="section qr-section">
+            <h2>请使用手机扫描二维码</h2>
+            
+            <div id="qrcode">
+                <p>正在生成二维码...</p>
+            </div>
+            
+            <div class="instructions">
+                <h3>使用说明：</h3>
+                <ol>
+                    <li>使用手机扫描上方二维码</li>
+                    <li>扫描成功后，手机将跳转到音频播放页面</li>
+                    <li>在手机上选择想要收听的音频内容</li>
+                </ol>
+            </div>
+            
+            <div class="url-display" id="url-display">
+                <!-- 这里将显示URL -->
+            </div>
+            
+            <div class="status-message" id="status-message"></div>
+            
+            <button class="btn" id="refresh-btn">刷新二维码</button>
+            <button class="btn" id="test-btn">测试链接</button>
+        </div>
+    </div>
+
+    <!-- 使用纯JavaScript QR码生成库 -->
+    <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0/lib/qr-code-styling.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlDisplay = document.getElementById('url-display');
+            const refreshBtn = document.getElementById('refresh-btn');
+            const testBtn = document.getElementById('test-btn');
+            const statusMessage = document.getElementById('status-message');
+            const qrcodeContainer = document.getElementById('qrcode');
+            
+            // 生成并显示二维码
+            function generateAndDisplayQRCode() {
+                // 构建音频播放页面的URL
+                // 注意：这里假设音频播放页面与当前页面在同一目录下，名为audio-player.html
+                // 如果部署到服务器，请使用完整的URL
+                const audioURL = window.location.origin + 
+                                window.location.pathname.split('/').slice(0, -1).join('/') + 
+                                '/audio-player.html';
+                
+                // 显示URL
+                urlDisplay.textContent = `目标页面: ${audioURL}`;
+                
+                // 清空容器
+                qrcodeContainer.innerHTML = '';
+                
+                // 使用QRCodeStyling库生成二维码
+                const qrCode = new QRCodeStyling({
+                    width: 280,
+                    height: 280,
+                    type: "canvas",
+                    data: audioURL,
+                    dotsOptions: {
+                        color: "#6e8efb",
+                        type: "rounded"
+                    },
+                    backgroundOptions: {
+                        color: "#ffffff",
+                    },
+                    imageOptions: {
+                        crossOrigin: "anonymous",
+                        margin: 10
+                    }
+                });
+                
+                // 渲染二维码
+                qrCode.append(qrcodeContainer);
+                
+                statusMessage.textContent = "二维码已生成，请使用手机扫描";
+                statusMessage.className = "status-message success";
+                
+                return audioURL;
+            }
+            
+            // 初始化
+            function init() {
+                // 初始生成二维码
+                const audioURL = generateAndDisplayQRCode();
+                
+                // 绑定事件
+                refreshBtn.addEventListener('click', generateAndDisplayQRCode);
+                testBtn.addEventListener('click', function() {
+                    // 打开音频播放页面进行测试
+                    window.open(audioURL, '_blank');
+                });
+            }
+            
+            // 启动应用
+            init();
+        });
+    </script>
+</body>
+</html>
