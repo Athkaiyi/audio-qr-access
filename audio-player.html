@@ -76,6 +76,12 @@
             text-decoration: none;
         }
         
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+        
         @media (min-width: 768px) {
             .audio-list {
                 grid-template-columns: repeat(2, 1fr);
@@ -90,10 +96,10 @@
         
         <div class="audio-list">
             <div class="audio-item">
-                <div class="audio-title">放松音乐 - 宁静山林</div>
-                <div class="audio-description">一段帮助您放松身心、缓解压力的自然音乐。</div>
-                <audio controls>
-                    <source src="https://assets.mixkit.co/music/preview/mixkit-spirit-of-the-forest-443.mp3" type="audio/mpeg">
+                <div class="audio-title">001.wav</div>
+                <div class="audio-description"></div>
+                <audio controls preload="metadata">
+                    <source src="https://media.githubusercontent.com/media/Athkaiyi/audio-qr-access/refs/heads/audio/001.wav" type="audio/mpeg">
                     您的浏览器不支持音频元素。
                 </audio>
             </div>
@@ -101,7 +107,7 @@
             <div class="audio-item">
                 <div class="audio-title">学习指导 - 高效学习技巧</div>
                 <div class="audio-description">掌握高效学习方法，提升学习效率。</div>
-                <audio controls>
+                <audio controls preload="metadata">
                     <source src="https://assets.mixkit.co/music/preview/mixkit-reflections-on-the-valley-119.mp3" type="audio/mpeg">
                     您的浏览器不支持音频元素。
                 </audio>
@@ -110,7 +116,7 @@
             <div class="audio-item">
                 <div class="audio-title">商务英语 - 日常会话</div>
                 <div class="audio-description">提高商务英语交流能力，掌握日常会话技巧。</div>
-                <audio controls>
+                <audio controls preload="metadata">
                     <source src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3" type="audio/mpeg">
                     您的浏览器不支持音频元素。
                 </audio>
@@ -119,7 +125,7 @@
             <div class="audio-item">
                 <div class="audio-title">睡前故事 - 小王子选段</div>
                 <div class="audio-description">经典文学作品《小王子》精选片段，助您安心入眠。</div>
-                <audio controls>
+                <audio controls preload="metadata">
                     <source src="https://assets.mixkit.co/music/preview/mixkit-serene-view-443.mp3" type="audio/mpeg">
                     您的浏览器不支持音频元素。
                 </audio>
@@ -128,5 +134,31 @@
         
         <a href="index.html" class="back-link">返回扫描页面</a>
     </div>
+
+    <script>
+        // 添加音频加载状态提示
+        document.addEventListener('DOMContentLoaded', function() {
+            const audioElements = document.querySelectorAll('audio');
+            
+            audioElements.forEach(audio => {
+                // 添加加载中提示
+                const loadingText = document.createElement('p');
+                loadingText.className = 'loading';
+                loadingText.textContent = '加载中...';
+                audio.parentNode.insertBefore(loadingText, audio.nextSibling);
+                
+                // 音频加载完成时移除提示
+                audio.addEventListener('canplaythrough', function() {
+                    loadingText.style.display = 'none';
+                });
+                
+                // 处理加载错误
+                audio.addEventListener('error', function() {
+                    loadingText.textContent = '加载失败，请检查网络连接';
+                    loadingText.style.color = '#e74c3c';
+                });
+            });
+        });
+    </script>
 </body>
 </html>
