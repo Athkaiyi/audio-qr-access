@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>音频资源访问系统</title>
+    <title>Audio Resource Access System</title>
     <style>
-        /* 保留原有样式不变 */
         * {
             margin: 0;
             padding: 0;
@@ -97,15 +97,6 @@
             margin-bottom: 8px;
         }
         
-        .url-display {
-            margin: 15px 0;
-            padding: 10px;
-            background: #e9ecef;
-            border-radius: 8px;
-            word-break: break-all;
-            font-size: 14px;
-        }
-        
         .btn {
             background: #6e8efb;
             color: white;
@@ -142,6 +133,12 @@
             color: #721c24;
         }
         
+        .language-note {
+            margin-top: 15px;
+            font-style: italic;
+            color: #666;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -156,56 +153,43 @@
 </head>
 <body>
     <div class="container">
-        <h1>音频资源访问系统</h1>
+        <h1>音频资源访问系统 / Audio Resource Access System</h1>
         
         <div class="section qr-section">
-            <h2>请使用手机扫描二维码</h2>
+            <h2>请使用手机扫描二维码 / Please scan the QR code with your phone</h2>
             
             <div id="qrcode">
-                <p>正在生成二维码...</p>
+                <p>正在生成二维码... / Generating QR code...</p>
             </div>
             
             <div class="instructions">
-                <h3>使用说明：</h3>
+                <h3>使用说明 / Instructions:</h3>
                 <ol>
-                    <li>使用手机扫描上方二维码</li>
-                    <li>扫描成功后，手机将跳转到音频播放页面</li>
-                    <li>在手机上选择想要收听的音频内容</li>
+                    <li>使用手机扫描上方二维码 / Scan the QR code above with your phone</li>
+                    <li>扫描成功后，手机将跳转到音频播放页面 / After scanning, you will be redirected to the audio player page</li>
+                    <li>在手机上选择想要收听的音频内容 / Select the audio content you want to listen to</li>
                 </ol>
-            </div>
-            
-            <div class="url-display" id="url-display">
-                <!-- 这里将显示URL -->
             </div>
             
             <div class="status-message" id="status-message"></div>
             
-            <button class="btn" id="refresh-btn">刷新二维码</button>
-            <button class="btn" id="test-btn">测试链接</button>
+            <button class="btn" id="refresh-btn">刷新二维码 / Refresh QR Code</button>
         </div>
+      
     </div>
 
     <!-- 使用纯JavaScript QR码生成库 -->
     <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0/lib/qr-code-styling.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const urlDisplay = document.getElementById('url-display');
             const refreshBtn = document.getElementById('refresh-btn');
-            const testBtn = document.getElementById('test-btn');
             const statusMessage = document.getElementById('status-message');
             const qrcodeContainer = document.getElementById('qrcode');
             
             // 生成并显示二维码
             function generateAndDisplayQRCode() {
                 // 构建音频播放页面的URL
-                // 注意：这里假设音频播放页面与当前页面在同一目录下，名为audio-player.html
-                // 如果部署到服务器，请使用完整的URL
-                const audioURL = window.location.origin + 
-                                window.location.pathname.split('/').slice(0, -1).join('/') + 
-                                '/audio-player.html';
-                
-                // 显示URL
-                urlDisplay.textContent = `目标页面: ${audioURL}`;
+                const audioURL = 'https://athkaiyi.github.io/audio-qr-access/audio-player.html';
                 
                 // 清空容器
                 qrcodeContainer.innerHTML = '';
@@ -217,11 +201,11 @@
                     type: "canvas",
                     data: audioURL,
                     dotsOptions: {
-                        color: "#6e8efb",
+                        color: "#000000", // 改为黑色
                         type: "rounded"
                     },
                     backgroundOptions: {
-                        color: "#ffffff",
+                        color: "#ffffff", // 白色背景
                     },
                     imageOptions: {
                         crossOrigin: "anonymous",
@@ -232,7 +216,7 @@
                 // 渲染二维码
                 qrCode.append(qrcodeContainer);
                 
-                statusMessage.textContent = "二维码已生成，请使用手机扫描";
+                statusMessage.textContent = "二维码已生成，请使用手机扫描 / QR code generated, please scan with your phone";
                 statusMessage.className = "status-message success";
                 
                 return audioURL;
@@ -241,14 +225,10 @@
             // 初始化
             function init() {
                 // 初始生成二维码
-                const audioURL = generateAndDisplayQRCode();
+                generateAndDisplayQRCode();
                 
                 // 绑定事件
                 refreshBtn.addEventListener('click', generateAndDisplayQRCode);
-                testBtn.addEventListener('click', function() {
-                    // 打开音频播放页面进行测试
-                    window.open(audioURL, '_blank');
-                });
             }
             
             // 启动应用
